@@ -1,37 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Book List Home</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js" integrity="sha512-ykZ1QQr0Jy/4ZkvKuqWn4iF3lqPZyij9iRv6sGqLRdTPkY69YX6+7wvVGmsdBbiIfN/8OdsI7HABjvEok6ZopQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="./src/css/home.css">
-</head>
-<body>
-    <div class="container" id="header">
-        <div class="row">
-            <h1>Book List</h1>
-            <nav>
-                <a href="./index.html" class="btn">Home</a>
-                <a href="./myBooks.html" class="btn">My Books</a>
-                <a href="./browse.html" class="btn">Browse</a>
-                <a href="" class="btn">Continue Reading</a>
-                <a href="" class="btn">Set Goals</a>
-            </nav>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
+      integrity="sha512-ykZ1QQr0Jy/4ZkvKuqWn4iF3lqPZyij9iRv6sGqLRdTPkY69YX6+7wvVGmsdBbiIfN/8OdsI7HABjvEok6ZopQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="./src/css/home.css" />
+  </head>
+  <body>
+    <div class="container-fluid" id="header">
+      <div class="row header">
+        <h1>Book List</h1>
+        <nav>
+          <a href="./index.html" class="btn">Home</a>
+          <a href="./myBooks.html" class="btn">My Books</a>
+          <a href="" class="btn">Continue Reading</a>
+          <a href="" class="btn">Set Goals</a>
+        </nav>
+        <div id="browse-books">
+          <div class="ui-input-container">
+            <input
+              required=""
+              placeholder="Search..."
+              class="ui-input"
+              type="text"
+              id="search-box"
+            />
+            <div class="ui-input-underline"></div>
+            <div class="ui-input-highlight"></div>
+            <div class="ui-input-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linejoin="round"
+                  stroke-linecap="round"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z"
+                ></path>
+              </svg>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-    <div class="container" id="main-container">
-        <div id="challenges"></div>
-        <h2>New Releases</h2>
-        <section id="new-releases"></section>
-        
-        <section id="recommendations">
-            <h2>Recommended for You</h2>
-            <div class="row" id="recommendations-list"></div>
-        </section>
+    <div class="container-fluid" id="main-container">
+      <div id="challenges"></div>
+      <div class="container-fluid" id="suggestion-box"></div>
+      <h2>New Releases</h2>
+      <section id="new-releases"></section>
+
+      <section id="recommendations">
+        <h2>Recommended for You</h2>
+        <div class="row" id="recommendations-list"></div>
+      </section>
     </div>
-</body>
-<script src="./src/js/home.js"></script>
+    <div id="add-book-modal">
+      <div id="book-data-modal">
+        <button
+          type="button"
+          class="btn-close close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+        <div style="display: flex; justify-content: center">
+          <div class="book-data-modal-header">
+            <h5 class="modal-title">Add Book</h5>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="left">
+            <h3><div class="title"></div></h3>
+            <img src="" alt="" class="book-image" />
+            <button class="btn btn-primary" id="push-book">
+              Add to My Books
+            </button>
+          </div>
+          <div class="right">
+            <div>
+              <h6>Author:</h6>
+              <div class="author"></div>
+            </div>
+            <div>
+              <h6>Category:</h6>
+              <div class="category"></div>
+            </div>
+            <div>
+              <h6>Description:</h6>
+              <div class="description"></div>
+            </div>
+            <div>
+              <h6>Publisher:</h6>
+              <div class="publisher"></div>
+            </div>
+            <div>
+              <h6>Published Date:</h6>
+              <div class="publishedDate"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="./src/js/home.js"></script>
 </html>
