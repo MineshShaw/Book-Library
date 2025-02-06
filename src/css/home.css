@@ -1,101 +1,5 @@
-#header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.ui-input-container {
-position: relative;
-width: 300px;
-}
-
-.ui-input {
-width: 100%;
-padding: 10px 10px 10px 40px;
-font-size: 1em;
-border: none;
-border-bottom: 2px solid #ccc;
-outline: none;
-background-color: transparent;
-transition: border-color 0.3s;
-}
-
-.ui-input:focus {
-border-color: #6c63ff;
-}
-
-.ui-input-underline {
-position: absolute;
-bottom: 0;
-left: 0;
-height: 2px;
-width: 100%;
-background-color: #6c63ff;
-transform: scaleX(0);
-transition: transform 0.3s;
-}
-
-.ui-input:focus + .ui-input-underline {
-transform: scaleX(1);
-}
-
-.ui-input-highlight {
-position: absolute;
-bottom: 0;
-left: 0;
-height: 100%;
-width: 0;
-background-color: rgba(108, 99, 255, 0.1);
-transition: width 0.3s;
-}
-
-.ui-input:focus ~ .ui-input-highlight {
-width: 100%;
-}
-
-.ui-input-icon {
-position: absolute;
-left: 10px;
-top: 50%;
-transform: translateY(-50%);
-color: #999;
-transition: color 0.3s;
-}
-
-.ui-input:focus ~ .ui-input-icon {
-color: #6c63ff;
-}
-
-.ui-input-icon svg {
-width: 20px;
-height: 20px;
-}
-
-#suggestion-box {
-    max-height: 100%;
-    overflow-y: auto;
-}
-
-.header {
-    width: 100% 
-}
-
-#main-container {
-    overflow: auto;
-    height: 80vh;
-}
-
 #header div {
     display: flex;
-}
-
-#browse-books {
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
 }
 
 #new-releases {
@@ -113,6 +17,8 @@ height: 20px;
     text-wrap: wrap;
     width: 300px;
     height: 450px;
+    padding: 10px;
+    background-color: #f0f0f0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -125,7 +31,7 @@ height: 20px;
 .card {
     width: 250px;
     height: 350px;
-    perspective: 1000px;
+    perspective: 1000px; /* Creates depth for the 3D effect */
 }
 
 .card-inner {
@@ -158,89 +64,5 @@ height: 20px;
 
 .card-back {
     transform: rotateY(180deg);
-    background: #f8f9fa;
-}
-
-div::-webkit-scrollbar {
-    display: none;
-  }
-
-body::-webkit-scrollbar {
-display: none;
-}
-
-#add-book-modal {
-    display: none;
-    position: fixed;
-    align-items: center;
-    justify-content: center;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-}
-
-#book-data-modal {
-    display: block;
-    position: relative;
-    align-items: center;
-    justify-content: center;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 80%;
-    height: 80%;
-    overflow: auto;
-    background-color: white;
-    border-radius: 10px;
-}
-
-.book-data-modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-radius: 8px;
-}
-
-.close {
-    top: 5px;
-    right: 5px;
-    position: absolute;
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.modal-body {
-    display: flex;
-    gap: 10px;
-    padding: 20px;;
-}
-
-.left {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 25%;
-}
-
-.right {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 75%;
-    overflow-x: auto; 
+    background: #f8f9fa; /* Light gray background for the back */
 }

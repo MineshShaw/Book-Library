@@ -10,79 +10,51 @@
     <link rel="stylesheet" href="./src/css/myBooks.css">
 </head>
 <body>
-    <div class="container-fluid" id="header">
+    <div class="container" id="header">
         <div class="row">
             <h1>Book Library</h1>
             <nav>
                 <a href="./index.html" class="btn">Home</a>
                 <a href="./myBooks.html" class="btn">My Books</a>
-                <a href="" class="btn">Continue Reading</a>
+                <a href="./browse.html" class="btn">Browse</a>
             </nav>
         </div>
     </div>
     <div class="container" id="main-container">
         <div class="container" id="sidebar">
-            <a href="" class="btn">All Books</a>
             <a href="" class="btn">Read</a>
             <a href="" class="btn">Currently Reading</a>
             <a href="" class="btn">Want To Read</a>
             <a href="" class="btn">Favourites</a>
         </div>
-        <div class="container-fluid" id="my-books">
+        <div class="container" id="my-books">
             <h2>My Books</h2>
             <div class="container-fluid" id="my-books-list">
                <div class="bookshelf">
+                <div class="shelf">
+                    <div class="book">
+                        <img src="https://books.google.com/books/content?id=PrEkEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api" class="book-image" alt="">
+                    </div>
+                </div>
                </div>
             </div>
         </div>
     </div>
-    <div id="book-modal">
-        <div id="book-data-modal">
-          <div class="id" style="display: none;"></div>
-          <button
-            type="button"
-            class="btn-close close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
-          <div style="display: flex; justify-content: center">
-            <div class="book-data-modal-header">
-              <h5 class="modal-title"></h5>
-            </div>
-          </div>
-          <div class="modal-body">
-            <div class="left">
-              <img src="" alt="" class="modal-book-image" />
-            </div>
-            <div class="right">
-              <div>
-                <h6>Author:</h6>
-                <div class="author"></div>
-              </div>
-              <div>
-                <h6>Category:</h6>
-                <div class="category"></div>
-              </div>
-              <div>
-                <h6>Description:</h6>
-                <div class="description"></div>
-              </div>
-              <div>
-                <h6>Publisher:</h6>
-                <div class="publisher"></div>
-              </div>
-              <div>
-                <h6>Published Date:</h6>
-                <div class="publishedDate"></div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn remove-book">Remove Book</button>
-            <div class="progress"></div>
-          </div>
+    <div class="modal" id="book-data-modal">
+        <h5 class="modal-title">
+            Atlas and the traitor
+        </h5>
+        <div class="left">
+            <img src="" alt="">
+            <div class="progress-bar"></div>
         </div>
-      </div>
+        <div class="right">
+            <div class="subtitle"></div>
+            <div class="author"></div>
+            <div class="description"></div>
+            <div class="category"></div>
+        </div>
+    </div>
 </body>
 <script src="./src/js/myBooks.js"></script>
 </html>
