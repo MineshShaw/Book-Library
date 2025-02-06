@@ -43,9 +43,10 @@ function renderMyBooks() {
 
 function displayBookData(bookData) {
     bookModal.style.display = "flex";
+    bookModal.querySelector(".id").textContent = bookData.id;
     bookModal.querySelector(".modal-title").textContent = bookData.title;
     bookModal.querySelector(".author").textContent = bookData.authors
-        ? bookData.authors.join(", ")
+        ? ((typeof bookData.authors === "string")? bookData.authors : bookData.authors.join(", "))
         : "Unknown Author";
     bookModal.querySelector(".category").textContent = bookData.categories
         ? bookData.categories.join(", ")
@@ -59,7 +60,7 @@ function displayBookData(bookData) {
     bookModal.querySelector(".publishedDate").textContent =
         bookData.publishedDate ? bookData.publishedDate : "Unknown Date";
     bookModal.querySelector(".modal-book-image").src =
-        bookData.imageLink?.thumbnail || "src/assets/thumbnailPlaceholder.jpg";
+        bookData.imageLinks.thumbnail || "src/assets/thumbnailPlaceholder.jpg";
 }
 
 function removeBookFromMyBooks() {

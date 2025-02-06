@@ -69,10 +69,12 @@ function createNewReleaseCard(bookData) {
 
 // Add to My Books
 function addToMyBooks(bookData) {
+  const id = bookData.title + bookData.authors + bookData.publishedDate + bookData.publisher + bookData.categories;
+  if (myBooks.some(book => book.id === id)) return;
   addBookModal.style.display = "flex";
   addBookModal.querySelector(".title").textContent = bookData.title;
   addBookModal.querySelector(".author").textContent = bookData.authors
-    ? bookData.authors.join(", ")
+    ? ((typeof bookData.authors === "string")? bookData.authors : bookData.authors.join(", "))
     : "Unknown Author";
   addBookModal.querySelector(".category").textContent = bookData.categories
     ? bookData.categories.join(", ")
@@ -88,6 +90,7 @@ function addToMyBooks(bookData) {
   addBookModal.querySelector(".book-image").src =
     bookData.imageLinks?.thumbnail || "src/assets/thumbnailPlaceholder.jpg";
   bookDataHolder.title = bookData.title;
+  bookDataHolder.id = id;
   bookDataHolder.authors = bookData.authors;
   bookDataHolder.categories = bookData.categories;
   bookDataHolder.description = bookData.description;
@@ -100,6 +103,7 @@ function addToMyBooks(bookData) {
 
 function pushToMyBooks() { 
   myBooks.push(bookDataHolder);
+  bookDataHolder = {};
   localStorage.setItem("myBooks", JSON.stringify(myBooks));
   addBookModal.style.display = "none";
 }
