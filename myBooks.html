@@ -78,9 +78,12 @@
                 <label for="monthly">Monthly</label>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-primary save-reading-goal">
+                <button type="button" class="btn save-reading-goal">
                   Save
                 </button>
+                <button type="button" class="btn remove-reading-goal">
+                  Remove Goal
+              </button>
               </div>
             </div>
           </div>
@@ -89,11 +92,11 @@
     </div>
     <div class="container" id="main-container">
       <div class="container" id="sidebar">
-        <a href="" class="btn">All Books</a>
-        <a href="" class="btn">Read</a>
-        <a href="" class="btn">Currently Reading</a>
-        <a href="" class="btn">Want To Read</a>
-        <a href="" class="btn">Favourites</a>
+        <button href="" class="btn filter all active">All Books</button>
+        <button href="" class="btn filter read">Read</button>
+        <button href="" class="btn filter currently-reading">Currently Reading</button>
+        <button href="" class="btn filter want-to-read">Want To Read</button>
+        <button href="" class="btn favourites">Favourites</button>
       </div>
       <div class="container-fluid" id="my-books">
         <h2>My Books</h2>
@@ -128,6 +131,15 @@
                 aria-valuemax="100"
               ></div>
             </div>
+            <div class="update-progress">
+              <i class="fa-solid fa-plus" style="font-size: larger; cursor: pointer"></i>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <div class="show-progress"></div>
+              <div class="">
+                <i class="fa-regular fa-heart toggle-favourite" style="font-size: 50px;; cursor: pointer; color: red"></i>
+              </div>
+            </div>
           </div>
           <div class="right">
             <div>
@@ -152,11 +164,7 @@
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <div class="update-progress">
-            <i class="fa-solid fa-plus" style="font-size: larger"></i>
-            <div class="show-progress"></div>
-          </div>
+        <div class="modal-footer" style="justify-content: center;">
           <button class="button remove-book">
             <svg viewBox="0 0 448 512" class="svgIcon">
               <path

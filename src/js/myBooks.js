@@ -10,6 +10,10 @@ const setReadingGoalModal = document.getElementById("set-reading-goal-modal");
 const saveReadingGoalBtn = document.querySelector(".save-reading-goal");
 const errorPopup = document.querySelector("#error-popup");
 const progressElement = bookModal.querySelector(".progress-bar");
+const filterButtons = document.querySelectorAll(".filter");
+const favouritesBtn = document.querySelector(".favourites");
+const toggleFavouriteBtn = document.querySelector(".toggle-favourite");
+const removeReadingGoalBtn = document.querySelector(".remove-reading-goal");
 
 /**
  * Resets the user's reading progress if the time period has changed.
@@ -69,7 +73,7 @@ function updateUserData() {
  * book data as an argument.
  * @returns {undefined}
  */
-function renderMyBooks() {
+function renderMyBooks(myBooks) {
     const myBooksList = document.querySelector(".bookshelf");
     let shelfID = 0;
     let index = 6;
@@ -107,6 +111,7 @@ function renderMyBooks() {
  */
 function displayBookData(bookData) {
     bookModal.style.display = "flex";
+    if (bookData.favourite) toggleFavouriteBtn.classList.add('fa-solid') ;
     bookModal.querySelector(".id").textContent = bookData.id;
     bookModal.querySelector(".modal-title").textContent = bookData.title;
     bookModal.querySelector(".author").textContent = bookData.authors
@@ -125,6 +130,19 @@ function displayBookData(bookData) {
         bookData.publishedDate ? bookData.publishedDate : "Unknown Date";
     bookModal.querySelector(".modal-book-image").src =
         bookData.imageLinks.thumbnail || "src/assets/thumbnailPlaceholder.jpg";
+    updateProgressBar();
+    toggleFavouriteBtn.addEventListener('click', () => {
+        toggleFavourite();
+    })
+}
+
+function toggleFavourite() {
+    const id = bookModal.querySelector(".id").textContent;
+    const book = myBooks.find(book => book.id === id);
+    toggleFavouriteBtn.classList.toggle('fa-solid');
+    if (book.favourite === undefined) book.favourite = false;
+    book.favourite = !book.favourite;
+    localStorage.setItem("myBooks", JSON.stringify(myBooks));
     updateProgressBar();
 }
 
@@ -155,7 +173,7 @@ function removeBookFromMyBooks() {
     bookModal.style.display = "none";
     userData.lastRead = (userData.lastRead == id)? "none" : userData.lastRead;
     updateUserData();
-    renderMyBooks();
+    renderMyBooks(myBooks);
 }
 
 /**
@@ -176,15 +194,17 @@ function continueReading() {
     displayBookData(book);
 }
 
-document.addEventListener('DOMContentLoaded', renderMyBooks);
+document.addEventListener('DOMContentLoaded', () => renderMyBooks(myBooks));
 
 bookModal
   .querySelector(".close-book-data-modal")
-  .addEventListener("click", () => (bookModal.style.display = "none"));
+  .addEventListener("click", () => {
+    bookModal.style.display = "none";
+    toggleFavouriteBtn.classList.remove('fa-solid');
+});
 
 bookModal.querySelector(".remove-book").addEventListener('click', () => {
     removeBookFromMyBooks();
-    renderMyBooks();
 })
 
 updateProgress.addEventListener('click', () => {
@@ -265,3 +285,46 @@ function renderError(err) {
     document.querySelector("#error-timer").style.width = "0%";
     document.querySelector('#error-timer').style.borderRadius = "8px";
 }
+
+/**
+ * Filters the myBooks array by the given category and renders the filtered
+ * array in the bookshelf container.
+ * @param {string} category - the category to filter by
+ */
+function filterBooks(category) {
+    const filteredBooks = myBooks.filter(book => book.myProgressStatus.toLowerCase() == category);
+    renderMyBooks(filteredBooks);
+}
+
+function removeReadingGoal() {
+    userData.challenges.challenge = 0;
+    userData.challenges.timePeriod = "none";
+    localStorage.setItem("bookListUserData", JSON.stringify(userData));
+}
+
+function filterFavourites() {
+    const filteredBooks = myBooks.filter(book => book.favourite);
+    renderMyBooks(filteredBooks);
+}
+
+filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        if (button.classList.contains('active')) return;
+        document.querySelector('.active').classList.remove('active');
+        button.classList.add('active');
+        const category = button.classList[2].split('-').join(' ');
+        if (category === 'all') renderMyBooks(myBooks);
+        else filterBooks(category);
+    })
+});
+
+favouritesBtn.addEventListener('click', () => {
+    document.querySelector('.active').classList.remove('active');
+    favouritesBtn.classList.add('active');
+    filterFavourites();
+})
+
+removeReadingGoalBtn.addEventListener('click', () => {
+    removeReadingGoal();
+    setReadingGoalModal.style.display = "none";
+});

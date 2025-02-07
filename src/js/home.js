@@ -1,4 +1,5 @@
 // Variables
+const apiKey = "AIzaSyCvvosyUuT2HfwtvDDfEuXHABYz6CBk8Ng";
 const newReleaseSection = document.getElementById("new-releases");
 const reccommendedSection = document.getElementById("recommendations");
 let myBooks = localStorage.getItem("myBooks")
@@ -67,7 +68,6 @@ function updateReadingStreak() {
  * Fiction, Mystery, Fantasy, Science-Fiction, and Romance genres.
  */
 function fetchNewReleases() {
-  const apiKey = "AIzaSyCvvosyUuT2HfwtvDDfEuXHABYz6CBk8Ng";
   const url = `https://www.googleapis.com/books/v1/volumes?q=subject:Fiction|Mystery|Fantasy|Science-Fiction|Romance&orderBy=newest&maxResults=40&key=${apiKey}`;
   fetch(url)
     .then((response) => {
@@ -75,7 +75,7 @@ function fetchNewReleases() {
     })
     .then((data) => {
       data.items.forEach((book) => {
-        createNewReleaseCard(book);
+        renderBookCards(book, newReleaseSection);
       });
     })
     .catch((error) => console.error("Error fetching books:", error));
@@ -91,9 +91,10 @@ function fetchNewReleases() {
  * @param {Object} bookData - The data object containing book information
  *                            as retrieved from the Google Books API.
  */
-function createNewReleaseCard(bookData) {
+function renderBookCards(bookData, targetDiv) {
+  try {
   const card = document.createElement("div");
-  card.classList.add("new-releases-card");
+  card.classList.add("books-card");
   if (bookData.volumeInfo.authors.join(", ").length > 50) {
     bookData.volumeInfo.authors =
       bookData.volumeInfo.authors.join(", ").slice(0, 50) + "...";
@@ -127,7 +128,10 @@ function createNewReleaseCard(bookData) {
   card
     .querySelector("#add-to-my-books")
     .addEventListener("click", () => addToMyBooks(bookData.volumeInfo));
-  newReleaseSection.appendChild(card);
+  targetDiv.appendChild(card);
+} catch (error) {
+    console.log(bookData)
+}
 }
 
 // Add to My Books
@@ -171,6 +175,7 @@ function addToMyBooks(bookData) {
   bookDataHolder.imageLinks = bookData.imageLinks;
   bookDataHolder.pages = bookData.pageCount;
   bookDataHolder.progress = 0;
+  bookDataHolder.favourite = false;
 }
 
 /**
@@ -211,7 +216,7 @@ searchBox.addEventListener("input", async () => {
  *   volumeInfo objects from the Google Books API. If the fetch fails, resolves to an empty array.
  */
 async function getSuggestions(query) {
-  const url = `https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=40`;
+  const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=40`;
   try {
     const response = await fetch(url);
     const data = await response.json();
@@ -277,10 +282,49 @@ function displaySuggestions(suggestions) {
 
 // Reccommendation Section
 
-function reccommendationCard(bookData) {
-  if (myBooks.length == 0) {
+async function fetchRecommendedBooks(favoriteBooks) {
+  const recommendations = new Set();
+  
+  for (const book of favoriteBooks.slice(0, 5)) {
+      const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(book)}&key=${apiKey}&maxResults=20`;
+      
+      try {
+          const response = await fetch(url);
+          const data = await response.json();
+          data.items.forEach((book) => {
+              recommendations.add(book);
+          })
+      } catch (error) {
+          console.error(`Error fetching recommendations for "${book}":`, error);
+      }
+  }
+  console.log(Array.from(recommendations));
+  return Array.from(recommendations);
+}
+
+function fetchReccommendations() {
+  const favourites = myBooks.filter(book => book.favourite === true);
+  if (favourites.length == 0) {
     reccommendedSection.style.display = "none";
     return;
+  } else {
+    fetchRecommendedBooks(favourites.map(book => book.title))
+    .then(response => {
+      if (response.length == 0) {
+        reccommendedSection.style.display = "none";
+      } else {
+        response = response.filter(bookData => {
+          const id = bookData.title + bookData.authors + bookData.publishedDate + bookData.publisher + bookData.categories; 
+          return !myBooks.some(book => book.id === id);
+        })
+        return response;
+      }
+    })
+    .then(recommendedBooks => {
+      recommendedBooks.forEach(book => {
+        renderBookCards(book, reccommendedSection);
+      });
+    });
   }
 }
 
@@ -289,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
   updateChallengesDiv();
   updateReadingStreak();
   fetchNewReleases();
-  reccommendationCard();
+  fetchReccommendations();
 });
 
 document
