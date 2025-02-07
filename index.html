@@ -22,6 +22,13 @@
       referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="./src/css/home.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
   </head>
   <body>
     <div class="container-fluid" id="header">
@@ -30,8 +37,12 @@
         <nav>
           <a href="./index.html" class="btn">Home</a>
           <a href="./myBooks.html" class="btn">My Books</a>
-          <a href="" class="btn">Continue Reading</a>
-          <a href="" class="btn">Set Goals</a>
+          <div id="reading-streak">
+            <div class="streak-icon">
+              <i class="fa-solid fa-book"></i>
+            </div>
+            <div class="streak-text"></div>
+          </div>
         </nav>
         <div id="browse-books">
           <div class="ui-input-container">
@@ -91,11 +102,8 @@
           <div class="left">
             <h3><div class="title"></div></h3>
             <img src="" alt="" class="book-image" />
-            <button class="btn btn-primary" id="push-book">
-              Add to My Books
-            </button>
           </div>
-          <div class="right">
+          <div class="middle">
             <div>
               <h6>Author:</h6>
               <div class="author"></div>
@@ -115,6 +123,18 @@
             <div>
               <h6>Published Date:</h6>
               <div class="publishedDate"></div>
+            </div>
+          </div>
+          <div class="right">
+            <div class="modal-drop-down">
+              <button class="btn btn-primary drop-down-button">
+                Add to My Books
+              </button>
+              <div class="drop-down">
+                <button class="btn push-book">Read</button>
+                <button class="btn push-book">Want to Read</button>
+                <button class="btn push-book">Currently Reading</button>
+              </div>
             </div>
           </div>
         </div>

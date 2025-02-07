@@ -1,16 +1,74 @@
 let myBooks = localStorage.getItem("myBooks") ? JSON.parse(localStorage.getItem("myBooks")) : [];
 let userData = localStorage.getItem("bookListUserData") ? JSON.parse(localStorage.getItem("bookListUserData")) : [];
-if (new Date().getDate() == 1) {
-    userData.challenges.progress = 0;
-    localStorage.setItem("bookListUserData", JSON.stringify(userData));
-}
+processChallenge();
 const bookModal = document.getElementById("book-modal");
+const updateProgress = document.querySelector(".update-progress");
+const showProgress = document.querySelector(".show-progress");
+const continueReadingBtn = document.querySelector("#continue-reading");
+const setGoalsBtn = document.querySelector("#set-goals");
+const setReadingGoalModal = document.getElementById("set-reading-goal-modal");
+const saveReadingGoalBtn = document.querySelector(".save-reading-goal");
+const errorPopup = document.querySelector("#error-popup");
+const progressElement = bookModal.querySelector(".progress-bar");
+
+/**
+ * Resets the user's reading progress if the time period has changed.
+ * Also updates the user's reading streak if the last read date is not today.
+ * @returns {undefined}
+ */
+function processChallenge() {
+    if (userData.challenges.timePeriod == "none" || userData.challenges.challenge == 0) return;
+    const timePeriod = userData.challenges.timePeriod;
+    const lastReadDate = userData.challenges.lastReadDate;
+    const date = new Date();
+    if (timePeriod == "daily") {
+        if (date > lastReadDate) {
+            userData.challenges.progress = 0;
+        }
+    } else if (timePeriod == "weekly") {
+        if (date.getDay() == 7 && date > lastReadDate) {
+            userData.challenges.progress = 0;
+        }
+    } else {
+        if (date.getDate() == 1 && date > lastReadDate) {
+            userData.challenges.progress = 0;
+        }
+    }
+    if ((date - lastReadDate) > 86400000) userData.challenges.readingStreak = 0;
+    updateUserData();
+}
+
+/**
+ * Removes a book from the myBooks array and updates local storage.
+ * 
+ * @param {Object} bookData - The data object containing the book information,
+ *                            which includes the book's id to be removed.
+ * @returns {undefined}
+ */
 
 function removeBookFromMyBooks(bookData) {
     myBooks = myBooks.filter(book => book.id !== bookData.id);
     localStorage.setItem("myBooks", JSON.stringify(myBooks));
 }
 
+/**
+ * Updates the local storage with the user's current reading challenge
+ * data in the 'bookListUserData' key.
+ * @returns {undefined}
+ */
+function updateUserData() {
+    localStorage.setItem("bookListUserData", JSON.stringify(userData));
+}
+
+/**
+ * Renders the books in the myBooks array in the .bookshelf container.
+ * Creates a new shelf element every 6 books and appends it to the container.
+ * Each book is rendered as a card with the book's title and image and
+ * is appended to the current shelf. The card is also given an event listener
+ * for the click event, which calls the displayBookData function with the
+ * book data as an argument.
+ * @returns {undefined}
+ */
 function renderMyBooks() {
     const myBooksList = document.querySelector(".bookshelf");
     let shelfID = 0;
@@ -41,6 +99,12 @@ function renderMyBooks() {
     })
 }
 
+/**
+ * Displays the book data modal with the book's information and updates the
+ * progress bar according to the book's progress.
+ *
+ * @param {Object} bookData - The data object containing book information
+ */
 function displayBookData(bookData) {
     bookModal.style.display = "flex";
     bookModal.querySelector(".id").textContent = bookData.id;
@@ -61,23 +125,143 @@ function displayBookData(bookData) {
         bookData.publishedDate ? bookData.publishedDate : "Unknown Date";
     bookModal.querySelector(".modal-book-image").src =
         bookData.imageLinks.thumbnail || "src/assets/thumbnailPlaceholder.jpg";
+    updateProgressBar();
 }
 
+/**
+ * Updates the progress bar in the book data modal according to the book's progress.
+ * @returns {void}
+ */
+function updateProgressBar() {
+    const id = bookModal.querySelector(".id").textContent;
+    const book = myBooks.find(book => book.id === id);
+    const progress = (book.progress/book.pages)*100;
+    progressElement.style.width = `${progress}%`;
+    showProgress.textContent = `${book.progress}/${book.pages}`;
+}
+
+/**
+ * Removes the currently displayed book from the user's collection, updates
+ * the local storage with the new myBooks array, and updates the lastRead
+ * property of the userData object. Hides the book data modal and renders
+ * the updated shelves.
+ *
+ * @returns {void}
+ */
 function removeBookFromMyBooks() {
     const id = bookModal.querySelector(".id").textContent;
     myBooks = myBooks.filter(book => book.id !== id);
     localStorage.setItem("myBooks", JSON.stringify(myBooks));
     bookModal.style.display = "none";
+    userData.lastRead = (userData.lastRead == id)? "none" : userData.lastRead;
+    updateUserData();
     renderMyBooks();
+}
+
+/**
+ * Displays the book data modal with the book's information that was last
+ * read. If no book was last read, displays an error message. Updates the
+ * user's reading streak accordingly. If the user has completed the book,
+ * displays an error message.
+ * @returns {void}
+ */
+function continueReading() {
+    const id = userData.lastRead;
+    console.log("id");
+    if (id === 'none') {
+        renderError("Book not found.")
+        return;
+    }
+    const book = myBooks.find(book => book.id === id);
+    displayBookData(book);
 }
 
 document.addEventListener('DOMContentLoaded', renderMyBooks);
 
-document
-  .querySelector(".close")
+bookModal
+  .querySelector(".close-book-data-modal")
   .addEventListener("click", () => (bookModal.style.display = "none"));
 
 bookModal.querySelector(".remove-book").addEventListener('click', () => {
     removeBookFromMyBooks();
     renderMyBooks();
 })
+
+updateProgress.addEventListener('click', () => {
+    const id = bookModal.querySelector(".id").textContent;
+    const book = myBooks.find(book => book.id === id);
+    if (book.progress == book.pages) renderError("You have completed the book.");
+    book.progress += 1;
+    userData.challenges.progress += 1;
+    const date = new Date();
+    if ((new Date(userData.challenges.lastReadDate) < date || new Date(userData.challenges.lastReadDate) == 'Invalid Date') && (new Date(userData.challenges.lastReadDate).getDay() != date.getDay())) {
+        userData.challenges.readingStreak += 1; 
+    }
+    userData.challenges.lastReadDate = date;
+    updateUserData();
+    if (book.myProgressStatus === "Want to Read") {
+        book.myProgressStatus = "Currently Reading";
+    }
+    if (book.progress === book.pages) {
+        book.myProgressStatus = "Read";
+        userData.lastRead = "none"
+        updateUserData();
+    } else if (book.progress > book.pages) {
+        book.progress = book.pages;
+    } else {
+        userData.lastRead = book.id;
+        updateUserData();
+    }   
+    localStorage.setItem("myBooks", JSON.stringify(myBooks));
+    updateProgressBar();
+})
+
+continueReadingBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    continueReading();
+});
+
+setGoalsBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    setReadingGoalModal.style.display = "block";
+});
+
+setReadingGoalModal.querySelector(".close").addEventListener('click', () => {
+    setReadingGoalModal.style.display = "none";
+});
+
+saveReadingGoalBtn.addEventListener('click', () => {
+    if (!setReadingGoalModal.querySelector("#reading-goal").value){
+        renderError("Please enter a reading goal.")
+        return;
+    }
+    if (!setReadingGoalModal.querySelector('input[name="time-period"]:checked')) {
+        renderError("Please select a time period.")
+        return;
+    }
+    userData.challenges.challenge = setReadingGoalModal.querySelector("#reading-goal").value;
+    userData.challenges.timePeriod = setReadingGoalModal.querySelector('input[name="time-period"]:checked').value;
+    localStorage.setItem("bookListUserData", JSON.stringify(userData));
+    setReadingGoalModal.style.display = "none";
+})
+
+/**
+ * Renders an error message in the error popup in the set reading goal modal.
+ * Focuses the input field, displays the error message, and sets a timer to hide
+ * the error message after 5 seconds.
+ * @param {string} err - the error message
+ */
+function renderError(err) {
+    setReadingGoalModal.querySelector("#reading-goal").focus();
+    document.querySelector("#error-popup").style.right = "10px";
+    document.querySelector(".error-message").textContent = err;
+    document.querySelector('#error-timer').style.borderRadius = "0px";
+    setTimeout(() => {
+        document.querySelector("#error-popup").style.right = "-100%";
+        document.querySelector("#error-timer").classList.add('no-transition');
+        document.querySelector("#error-timer").style.width = "100%";
+        document.querySelector('#error-timer').classList.remove('no-transition');
+    }, 5000)
+    document.querySelector("#error-timer").style.width = "0%";
+    document.querySelector('#error-timer').style.borderRadius = "8px";
+}

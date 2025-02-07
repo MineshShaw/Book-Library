@@ -4,15 +4,68 @@ const reccommendedSection = document.getElementById("recommendations");
 let myBooks = localStorage.getItem("myBooks")
   ? JSON.parse(localStorage.getItem("myBooks"))
   : [];
+let userData = localStorage.getItem("bookListUserData") ? JSON.parse(localStorage.getItem("bookListUserData")) : [];
+if (userData.challenges === undefined) {
+    userData = {"challenges": {"progress": 0, "challenge": 0, "timePeriod": "none", "lastReadDate": "none", "readingStreak": 0}, "lastRead": "none"};
+    localStorage.setItem("bookListUserData", JSON.stringify(userData));
+}
 const addBookBtn = document.getElementById("add-to-my-books");
 const searchBox = document.getElementById("search-box");
 const suggestionBox = document.getElementById("suggestion-box");
 const addBookModal = document.getElementById("add-book-modal");
-const pushBookBtn = document.getElementById("push-book");
+const pushBookBtn = document.querySelectorAll(".push-book");
 let bookDataHolder = {};
+const dropDownButton = document.querySelector(".drop-down-button");
+const dropDown = document.querySelector(".drop-down");
+const challengesDiv = document.getElementById('challenges');
+const readingStreak = document.getElementById('reading-streak');
 // Functions
 
 // New Release Section
+
+/**
+ * Updates the #challenges div with the current progress of the user's
+ * reading challenge. If the user has no challenge set, the div is left
+ * blank.
+ * @returns {undefined}
+ */
+function updateChallengesDiv() {
+  if (userData.challenges.timePeriod == "none" || userData.challenges.challenge == 0) return;
+  const timePeriod = userData.challenges.timePeriod;
+  let divContent = '';
+  if (userData.challenges.progress >= userData.challenges.challenge) {
+      divContent = `You have completed your reading challenge! Pages read: ${userData.challenges.progress}`;
+  }else if (timePeriod == "daily") {
+      divContent = `You have read ${userData.challenges.progress} out of ${userData.challenges.challenge} pages today!`;
+  } else if (timePeriod == "weekly") {
+      divContent = `You have read ${userData.challenges.progress} out of ${userData.challenges.challenge} pages this week!`;
+  } else {
+      divContent = `You have read ${userData.challenges.progress} out of ${userData.challenges.challenge} pages  this month!`;
+  }
+  challengesDiv.innerHTML = divContent;
+}
+
+/**
+ * Updates the #reading-streak div with the current reading streak of the user.
+ * If the user has no reading streak, the div is left blank.
+ * @returns {undefined}
+ */
+function updateReadingStreak() {
+  const streak = userData.challenges.readingStreak;
+  if (streak == 0) {
+    readingStreak.querySelector('.streak-text').textContent = '';
+    readingStreak.querySelector('.streak-icon').style.color = 'grey';
+    return;
+  };
+  readingStreak.querySelector('.streak-text').textContent = `You are on a ${streak} day reading streak!`;
+  readingStreak.querySelector('.streak-icon').style.color = 'green';
+}
+
+/**
+ * Fetches 40 new releases from Google Books API and displays them in the
+ * #new-releases section. The books are sorted by newest and are from the
+ * Fiction, Mystery, Fantasy, Science-Fiction, and Romance genres.
+ */
 function fetchNewReleases() {
   const apiKey = "AIzaSyCvvosyUuT2HfwtvDDfEuXHABYz6CBk8Ng";
   const url = `https://www.googleapis.com/books/v1/volumes?q=subject:Fiction|Mystery|Fantasy|Science-Fiction|Romance&orderBy=newest&maxResults=40&key=${apiKey}`;
@@ -28,6 +81,16 @@ function fetchNewReleases() {
     .catch((error) => console.error("Error fetching books:", error));
 }
 
+/**
+ * Creates a new release card element for a book and appends it to the
+ * #new-releases section. The card includes the book's thumbnail image,
+ * title, authors, and published date. If the authors' string exceeds
+ * 50 characters, it is truncated with an ellipsis. A button is included
+ * to add the book to the user's collection.
+ *
+ * @param {Object} bookData - The data object containing book information
+ *                            as retrieved from the Google Books API.
+ */
 function createNewReleaseCard(bookData) {
   const card = document.createElement("div");
   card.classList.add("new-releases-card");
@@ -68,6 +131,15 @@ function createNewReleaseCard(bookData) {
 }
 
 // Add to My Books
+
+/**
+ * Displays the add book modal with the book's information and sets up the
+ * data holder for the book to be added. If the book is already in the user's
+ * collection, it does nothing.
+ *
+ * @param {Object} bookData - The data object containing book information
+ *                            as retrieved from the Google Books API.
+ */
 function addToMyBooks(bookData) {
   const id = bookData.title + bookData.authors + bookData.publishedDate + bookData.publisher + bookData.categories;
   if (myBooks.some(book => book.id === id)) return;
@@ -101,11 +173,18 @@ function addToMyBooks(bookData) {
   bookDataHolder.progress = 0;
 }
 
+/**
+ * Adds the current book data held in bookDataHolder to the myBooks array,
+ * updates the local storage with the new myBooks array, and resets 
+ * bookDataHolder. Closes the addBookModal and removes the 'show' class 
+ * from the drop-down menu.
+ */
 function pushToMyBooks() { 
   myBooks.push(bookDataHolder);
   bookDataHolder = {};
   localStorage.setItem("myBooks", JSON.stringify(myBooks));
   addBookModal.style.display = "none";
+  dropDown.classList.remove("show") ;
 }
 
 // Browse Books
@@ -125,6 +204,12 @@ searchBox.addEventListener("input", async () => {
   }, 500);
 });
 
+/**
+ * Fetches book suggestions from Google Books API based on the provided query.
+ * @param {string} query The query to search the Google Books API with.
+ * @returns {Promise.<Array.<Object>>} A promise that resolves to an array of 
+ *   volumeInfo objects from the Google Books API. If the fetch fails, resolves to an empty array.
+ */
 async function getSuggestions(query) {
   const url = `https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=40`;
   try {
@@ -137,6 +222,11 @@ async function getSuggestions(query) {
   }
 }
 
+/**
+ * Displays the provided suggestions in the suggestionBox.
+ * @param {Array.<Object>} suggestions The array of volumeInfo objects from the Google Books API.
+ * @returns {void}
+ */
 function displaySuggestions(suggestions) {
   suggestionBox.innerHTML = "";
   if (suggestions.length === 0) {
@@ -169,6 +259,7 @@ function displaySuggestions(suggestions) {
                       book.authors ? book.authors.join(", ") : "Unknown Author"
                     }</p>
                     <p>${book.publishedDate}</p>
+                    
                     <button class="btn btn-primary" id="add-to-my-books">Add to My Books</button>
                 </div>
                 <div style="width: 60%">
@@ -185,6 +276,7 @@ function displaySuggestions(suggestions) {
 }
 
 // Reccommendation Section
+
 function reccommendationCard(bookData) {
   if (myBooks.length == 0) {
     reccommendedSection.style.display = "none";
@@ -194,12 +286,27 @@ function reccommendationCard(bookData) {
 
 // Events
 document.addEventListener("DOMContentLoaded", () => {
+  updateChallengesDiv();
+  updateReadingStreak();
   fetchNewReleases();
   reccommendationCard();
 });
 
 document
   .querySelector(".close")
-  .addEventListener("click", () => (addBookModal.style.display = "none"));
+  .addEventListener("click", () => {
+    addBookModal.style.display = "none";
+    dropDown.classList.remove("show");
+  });
 
-pushBookBtn.addEventListener("click", pushToMyBooks);
+pushBookBtn.forEach(btn => btn.addEventListener("click", () => {
+    bookDataHolder.myProgressStatus = btn.innerText;
+    if (bookDataHolder.myProgressStatus === "Read") {
+        bookDataHolder.progress = bookDataHolder.pages;
+    }
+    pushToMyBooks();
+}));
+
+dropDownButton.addEventListener("click", () => {
+    dropDown.classList.toggle("show");
+})

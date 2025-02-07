@@ -237,10 +237,98 @@ display: none;
     width: 25%;
 }
 
-.right {
+.middle {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    width: 75%;
+    width: 65%;
     overflow-x: auto; 
+}
+
+.right {
+    width: 20%;
+}
+
+.modal-drop-down {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .drop-down-button {
+    background: linear-gradient(135deg, #ff8a00, #e52e71);
+    color: white;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .drop-down-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .drop-down {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease-in-out;
+    pointer-events: none;
+    width: 160px;
+  }
+  
+  .drop-down.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+  
+  .push-book {
+    background: white;
+    border: none;
+    width: 100%;
+    padding: 10px 15px;
+    text-align: left;
+    font-size: 14px;
+    color: #333;
+    transition: background 0.3s, transform 0.2s;
+  }
+  
+  .push-book:hover {
+    background: #f7f7f7;
+    transform: scale(1.05);
+  }
+  
+#reading-streak {
+    display: flex;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.streak-icon {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+#challenges {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
