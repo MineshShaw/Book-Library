@@ -283,10 +283,20 @@ function displaySuggestions(suggestions) {
 
 // Reccommendation Section
 
+/**
+ * Fetches a list of recommended books from Google Books API based on
+ * the provided array of favorite book titles. The API is queried
+ * with the first 5 book titles, and the results are combined into a
+ * Set to eliminate duplicates. If a query fails, an error is logged
+ * to the console, and the function continues to the next query.
+ * @param {string[]} favoriteBooks The array of favorite book titles.
+ * @returns {Promise.<Array.<Object>>} A promise that resolves to an
+ *   array of volumeInfo objects from the Google Books API.
+ */
 async function fetchRecommendedBooks(favoriteBooks) {
   const recommendations = new Set();
   
-  for (const book of favoriteBooks.slice(0, 5)) {
+  for (const book of favoriteBooks.slice(favoriteBooks.length - 10)) {
       const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(book)}&key=${apiKey}&maxResults=20`;
       
       try {
@@ -302,6 +312,16 @@ async function fetchRecommendedBooks(favoriteBooks) {
   return Array.from(recommendations);
 }
 
+/**
+ * Fetches a list of recommended books from Google Books API based on the
+ * titles of the user's favorite books. If the user has no favorite books,
+ * the #recommendations section is hidden. The API is queried with the
+ * first 5 favorite book titles, and the results are combined into a
+ * Set to eliminate duplicates. If a query fails, an error is logged
+ * to the console, and the function continues to the next query.
+ * The function then renders the recommended books in the
+ * #recommendations section.
+ */
 function fetchReccommendations() {
   const favourites = myBooks.filter(book => book.favourite === true);
   if (favourites.length == 0) {
