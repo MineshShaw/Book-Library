@@ -95,7 +95,7 @@ function renderBookCards(bookData, targetDiv) {
   try {
   const card = document.createElement("div");
   card.classList.add("books-card");
-  if (bookData.volumeInfo.authors.join(", ").length > 50) {
+  if (bookData.volumeInfo.authors?.join(", ").length > 50) {
     bookData.volumeInfo.authors =
       bookData.volumeInfo.authors.join(", ").slice(0, 50) + "...";
   }
@@ -130,7 +130,8 @@ function renderBookCards(bookData, targetDiv) {
     .addEventListener("click", () => addToMyBooks(bookData.volumeInfo));
   targetDiv.appendChild(card);
 } catch (error) {
-    console.log(bookData)
+    console.log(bookData);
+    console.error(error);
 }
 }
 
@@ -241,19 +242,19 @@ function displaySuggestions(suggestions) {
   suggestions.forEach((book) => {
     const suggestionItem = document.createElement("div");
     suggestionItem.classList.add("suggestion");
-    const description =
-      book.description?.substring(0, 1000) + "..." ||
+    const description = (book.description)?
+      book.description.substring(0, 1000) + "..." :
       "Description not available.";
     suggestionItem.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 10px; margin: 10px; cursor: pointer; padding: 10px; border-radius: 8px;">
-            <div style="margin: 10px">
+        <div>
+            <div class="img">
                 <img src="${
                   book.imageLinks?.thumbnail ||
                   "src/assets/thumbnailPlaceholder.jpg"
                 }" onerror="this.src='src/assets/thumbnailPlaceholder.jpg'">
             </div>
-            <div style="display: flex; gap: 10px; margin: 10px; cursor: pointer; padding: 10px; border-radius: 8px;">
-                <div style="width: 40%">
+            <div class="content">
+                <div class="data">
                     <p>${
                       book.categories
                         ? book.categories.join(", ")
@@ -267,7 +268,7 @@ function displaySuggestions(suggestions) {
                     
                     <button class="btn btn-primary" id="add-to-my-books">Add to My Books</button>
                 </div>
-                <div style="width: 60%">
+                <div class="description">
                     <p>${description}</p>
                 </div>
             </div>
@@ -298,7 +299,6 @@ async function fetchRecommendedBooks(favoriteBooks) {
           console.error(`Error fetching recommendations for "${book}":`, error);
       }
   }
-  console.log(Array.from(recommendations));
   return Array.from(recommendations);
 }
 

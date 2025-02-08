@@ -5,6 +5,12 @@
     padding: 10px;
     border-radius: 8px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #4B3D2D;
+    color: #E3D4B9;
+}
+
+nav .btn {
+    color: #E3D4B9;
 }
 
 .ui-input-container {
@@ -24,7 +30,7 @@ transition: border-color 0.3s;
 }
 
 .ui-input:focus {
-border-color: #6c63ff;
+border-color: #8b5b29;
 }
 
 .ui-input-underline {
@@ -33,7 +39,7 @@ bottom: 0;
 left: 0;
 height: 2px;
 width: 100%;
-background-color: #6c63ff;
+background-color: #8b5b29;
 transform: scaleX(0);
 transition: transform 0.3s;
 }
@@ -48,7 +54,7 @@ bottom: 0;
 left: 0;
 height: 100%;
 width: 0;
-background-color: rgba(108, 99, 255, 0.1);
+background-color: rgba(194, 178, 128, 0.1);
 transition: width 0.3s;
 }
 
@@ -66,7 +72,7 @@ transition: color 0.3s;
 }
 
 .ui-input:focus ~ .ui-input-icon {
-color: #6c63ff;
+color: #8b5b29;
 }
 
 .ui-input-icon svg {
@@ -74,18 +80,61 @@ width: 20px;
 height: 20px;
 }
 
+#main-container {
+    overflow: auto;
+    height: 80vh;
+    background-color: #d9cba0;
+    color: #333;
+}
+
+#challenges {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
 #suggestion-box {
     max-height: 100%;
     overflow-y: auto;
 }
 
-.header {
-    width: 100% 
+.suggestion > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    gap: 10px;
 }
 
-#main-container {
-    overflow: auto;
-    height: 80vh;
+.suggestion > div > .img {
+    display: flex;
+    justify-content: center;
+    width: 15%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.suggestion > div > .content {
+    width: 85%;
+    display: flex;
+}
+
+.content > .data {
+    width: 25%;
+}
+
+.content > .description {
+    width: 60%;
+}
+
+.header {
+    width: 100% 
 }
 
 #header div {
@@ -146,7 +195,6 @@ height: 20px;
     position: absolute;
     backface-visibility: hidden;
     background: #fff;
-    border-radius: 10px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     padding: 15px;
     display: flex;
@@ -194,8 +242,14 @@ display: none;
     width: 80%;
     height: 80%;
     overflow: auto;
-    background-color: white;
+    background-color: #E3D4B9;
+    color: #8b5b29;
     border-radius: 10px;
+}
+
+h6, h3 {
+    font-weight: bold;
+    text-decoration: underline;
 }
 
 .book-data-modal-header {
@@ -255,7 +309,7 @@ display: none;
   }
   
   .drop-down-button {
-    background: linear-gradient(135deg, #ff8a00, #e52e71);
+    background: linear-gradient(135deg, #c65d3b, #a65e2e);
     color: white;
     border-radius: 8px;
     padding: 10px 15px;
@@ -325,10 +379,12 @@ display: none;
     margin-bottom: 10px;
 }
 
-#challenges {
-    width: 100%;
-    text-align: center;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+#new-releases::-webkit-scrollbar, #recommendations::-webkit-scrollbar {
+    height: 12px;
+    background: transparent;
 }
+
+#new-releases::-webkit-scrollbar-thumb, #recommendations::-webkit-scrollbar-thumb {
+    background: #4B3D2D;
+    border-radius: 10px; 
+  }
