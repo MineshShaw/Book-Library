@@ -188,6 +188,11 @@ overflow: auto;
 background-color: rgba(0, 0, 0, 0.4);
 }
 
+h6, h3 {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
 #book-data-modal {
 display: block;
 position: relative;
@@ -199,7 +204,8 @@ top: 0;
 width: 80%;
 height: 80%;
 overflow: auto;
-background-color: white;
+background-color: #E3D4B9;
+  color: #8b5b29;
 border-radius: 10px;
 }
 
