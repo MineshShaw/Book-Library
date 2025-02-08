@@ -1,6 +1,8 @@
+// Variables
 let myBooks = localStorage.getItem("myBooks") ? JSON.parse(localStorage.getItem("myBooks")) : [];
 let userData = localStorage.getItem("bookListUserData") ? JSON.parse(localStorage.getItem("bookListUserData")) : [];
 processChallenge();
+processReadingStreak();
 const bookModal = document.getElementById("book-modal");
 const updateProgress = document.querySelector(".update-progress");
 const showProgress = document.querySelector(".show-progress");
@@ -15,6 +17,8 @@ const favouritesBtn = document.querySelector(".favourites");
 const toggleFavouriteBtn = document.querySelector(".toggle-favourite");
 const removeReadingGoalBtn = document.querySelector(".remove-reading-goal");
 
+// Functions
+
 /**
  * Resets the user's reading progress if the time period has changed.
  * Also updates the user's reading streak if the last read date is not today.
@@ -23,7 +27,7 @@ const removeReadingGoalBtn = document.querySelector(".remove-reading-goal");
 function processChallenge() {
     if (userData.challenges.timePeriod == "none" || userData.challenges.challenge == 0) return;
     const timePeriod = userData.challenges.timePeriod;
-    const lastReadDate = userData.challenges.lastReadDate;
+    const lastReadDate = new Date(userData.challenges.lastReadDate);
     const date = new Date();
     if (timePeriod == "daily") {
         if (date > lastReadDate) {
@@ -38,7 +42,33 @@ function processChallenge() {
             userData.challenges.progress = 0;
         }
     }
-    if ((date - lastReadDate) > 86400000) userData.challenges.readingStreak = 0;
+    updateUserData();   
+}
+
+/**
+ * Resets the user's reading streak if the last read date is not yesterday.
+ * Handles edge cases for the beginning of the month and year.
+ * Updates the user data in local storage after modifying the streak.
+ * 
+ * @returns {void}
+ */
+function processReadingStreak() {
+    const lastReadDate = new Date(userData.challenges.lastReadDate);
+    const date = new Date();
+    const yesterday = new Date(date);
+    if (date.getDate() === 1) {
+        if (date.getMonth() === 0) { // If January 1st, go to December 31st of last year
+            yesterday.setFullYear(date.getFullYear() - 1);
+            yesterday.setMonth(11);
+            yesterday.setDate(31);
+        } else {
+            yesterday.setMonth(date.getMonth() - 1);
+            yesterday.setDate(new Date(yesterday.getFullYear(), yesterday.getMonth() + 1, 0).getDate());
+        }
+    } else {
+        yesterday.setDate(date.getDate() - 1);
+    }
+    if (lastReadDate.toDateString() != yesterday.toDateString()) userData.challenges.readingStreak = 0;
     updateUserData();
 }
 
@@ -194,6 +224,61 @@ function continueReading() {
     displayBookData(book);
 }
 
+/**
+ * Renders an error message in the error popup in the set reading goal modal.
+ * Focuses the input field, displays the error message, and sets a timer to hide
+ * the error message after 5 seconds.
+ * @param {string} err - the error message
+ */
+function renderError(err) {
+    setReadingGoalModal.querySelector("#reading-goal").focus();
+    document.querySelector("#error-popup").style.right = "10px";
+    document.querySelector(".error-message").textContent = err;
+    document.querySelector('#error-timer').style.borderRadius = "0px";
+    setTimeout(() => {
+        document.querySelector("#error-popup").style.right = "-100%";
+        document.querySelector("#error-timer").classList.add('no-transition');
+        document.querySelector("#error-timer").style.width = "100%";
+        document.querySelector('#error-timer').classList.remove('no-transition');
+    }, 5000)
+    document.querySelector("#error-timer").style.width = "0%";
+    document.querySelector('#error-timer').style.borderRadius = "8px";
+}
+
+/**
+ * Filters the myBooks array by the given category and renders the filtered
+ * array in the bookshelf container.
+ * @param {string} category - the category to filter by
+ */
+function filterBooks(category) {
+    const filteredBooks = myBooks.filter(book => book.myProgressStatus.toLowerCase() == category);
+    renderMyBooks(filteredBooks);
+}
+
+/**
+ * Removes the user's current reading goal and resets the time period.
+ * Updates the local storage with the new user data reflecting the removal
+ * of the reading goal.
+ */
+
+function removeReadingGoal() {
+    userData.challenges.challenge = 0;
+    userData.challenges.timePeriod = "none";
+    localStorage.setItem("bookListUserData", JSON.stringify(userData));
+}
+
+
+/**
+ * Filters the myBooks array by only the books that have been marked as
+ * favourites and renders the filtered array in the bookshelf container.
+ */
+function filterFavourites() {
+    const filteredBooks = myBooks.filter(book => book.favourite);
+    renderMyBooks(filteredBooks);
+}
+
+// Events
+
 document.addEventListener('DOMContentLoaded', () => renderMyBooks(myBooks));
 
 bookModal
@@ -206,6 +291,17 @@ bookModal
 bookModal.querySelector(".remove-book").addEventListener('click', () => {
     removeBookFromMyBooks();
 })
+
+filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        if (button.classList.contains('active')) return;
+        document.querySelector('.active').classList.remove('active');
+        button.classList.add('active');
+        const category = button.classList[2].split('-').join(' ');
+        if (category === 'all') renderMyBooks(myBooks);
+        else filterBooks(category);
+    })
+});
 
 updateProgress.addEventListener('click', () => {
     const id = bookModal.querySelector(".id").textContent;
@@ -264,59 +360,6 @@ saveReadingGoalBtn.addEventListener('click', () => {
     localStorage.setItem("bookListUserData", JSON.stringify(userData));
     setReadingGoalModal.style.display = "none";
 })
-
-/**
- * Renders an error message in the error popup in the set reading goal modal.
- * Focuses the input field, displays the error message, and sets a timer to hide
- * the error message after 5 seconds.
- * @param {string} err - the error message
- */
-function renderError(err) {
-    setReadingGoalModal.querySelector("#reading-goal").focus();
-    document.querySelector("#error-popup").style.right = "10px";
-    document.querySelector(".error-message").textContent = err;
-    document.querySelector('#error-timer').style.borderRadius = "0px";
-    setTimeout(() => {
-        document.querySelector("#error-popup").style.right = "-100%";
-        document.querySelector("#error-timer").classList.add('no-transition');
-        document.querySelector("#error-timer").style.width = "100%";
-        document.querySelector('#error-timer').classList.remove('no-transition');
-    }, 5000)
-    document.querySelector("#error-timer").style.width = "0%";
-    document.querySelector('#error-timer').style.borderRadius = "8px";
-}
-
-/**
- * Filters the myBooks array by the given category and renders the filtered
- * array in the bookshelf container.
- * @param {string} category - the category to filter by
- */
-function filterBooks(category) {
-    const filteredBooks = myBooks.filter(book => book.myProgressStatus.toLowerCase() == category);
-    renderMyBooks(filteredBooks);
-}
-
-function removeReadingGoal() {
-    userData.challenges.challenge = 0;
-    userData.challenges.timePeriod = "none";
-    localStorage.setItem("bookListUserData", JSON.stringify(userData));
-}
-
-function filterFavourites() {
-    const filteredBooks = myBooks.filter(book => book.favourite);
-    renderMyBooks(filteredBooks);
-}
-
-filterButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        if (button.classList.contains('active')) return;
-        document.querySelector('.active').classList.remove('active');
-        button.classList.add('active');
-        const category = button.classList[2].split('-').join(' ');
-        if (category === 'all') renderMyBooks(myBooks);
-        else filterBooks(category);
-    })
-});
 
 favouritesBtn.addEventListener('click', () => {
     document.querySelector('.active').classList.remove('active');
