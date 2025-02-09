@@ -352,7 +352,6 @@ async function fetchRecommendedBooks(favoriteBooks) {
  */
 function fetchReccommendations() {
   const favourites = myBooks.filter(book => book.favourite === true);
-  console.log(favourites == 0);
   if (favourites.length == 0) {
     reccommendedSection.parentElement.style.display = "none";
     return;

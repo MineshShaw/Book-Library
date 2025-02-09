@@ -16,6 +16,9 @@ const favouritesBtn = document.querySelector(".favourites");
 const toggleFavouriteBtn = document.querySelector(".toggle-favourite");
 const removeReadingGoalBtn = document.querySelector(".remove-reading-goal");
 
+if (myBooks.length == 0) {
+    document.querySelector(".bookshelf").innerHTML = "<p style='color:#e3d4b9'> 📖 A journey of a thousand pages begins with a single book! Add one now and begin your reading quest.</p>";   
+}
 // Functions
 
 /**
@@ -76,6 +79,7 @@ function updateUserData() {
  * @returns {undefined}
  */
 function renderMyBooks(myBooks) {
+    if (myBooks.length == 0) return;
     const myBooksList = document.querySelector(".bookshelf");
     let shelfID = 0;
     let index = 6;
