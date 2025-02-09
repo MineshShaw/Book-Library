@@ -6,29 +6,29 @@ https://book-library-one-pied.vercel.app
 
 ## Features
 
-- Book Categorization: Store books under 'Read', 'Want to Read', and 'Currently Reading'.
+- **Book Categorization**: Store books under 'Read', 'Want to Read', and 'Currently Reading'.
 
-- Favorites Filtering: Mark and filter favorite books for easy access.
+- **Favorites Filtering**: Mark and filter favorite books for easy access.
 
-- Reading Streak Tracking: Tracks the number of consecutive days the user has read.
+- **Reading Streak Tracking**: Tracks the number of consecutive days the user has read.
 
-- Reading Goals: Set daily, weekly, or monthly reading targets based on page count.
+- **Reading Goals**: Set daily, weekly, or monthly reading targets based on page count.
 
-- Book Recommendations: Suggests books based on the user's favorite list.
+- **Book Recommendations**: Suggests books based on the user's favorite list.
 
-- Progress Tracking: Displays a progress bar for each book to visualize pages read.
+- **Progress Tracking**: Displays a progress bar for each book to visualize pages read.
 
-- Last Read Feature: Saves the last book and page read to allow users to continue where they left off.
+- **Last Read Feature**: Saves the last book and page read to allow users to continue where they left off.
 
 ## Technologies Used
 
-- Google Books API: Fetch book data.
+- **Google Books API**: Fetch book data.
 
-- LocalStorage API: Store user data persistently in the browser.
+- **LocalStorage API**: Store user data persistently in the browser.
 
-- Bootstrap: For responsive design and styling.
+- **Bootstrap**: For responsive design and styling.
 
-- HTML, CSS, JavaScript: Frontend development.
+- **HTML, CSS, JavaScript**: Frontend development.
 
 ## Setup Instructions
 
@@ -53,7 +53,6 @@ https://book-library-one-pied.vercel.app
 - Add dark mode for better UI accessibility.
 
 ## File Structure
-    ```bash
         .
         ├─ src
         │   ├─ assets
@@ -67,6 +66,4 @@ https://book-library-one-pied.vercel.app
         │
         ├─ index.html
         ├─ myBooks.html
-        └─ README.md
-        
-    ```
+        └─ README.md    
