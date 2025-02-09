@@ -52,6 +52,8 @@ https://book-library-one-pied.vercel.app
 
 - Add dark mode for better UI accessibility.
 
+- Making it more responsive for mobile use.
+
 ## File Structure
         .
         ├─ src
