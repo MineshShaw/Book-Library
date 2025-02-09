@@ -231,12 +231,13 @@ function renderError(err) {
     document.querySelector("#error-popup").style.right = "10px";
     document.querySelector(".error-message").textContent = err;
     document.querySelector('#error-timer').style.borderRadius = "0px";
+
     setTimeout(() => {
         document.querySelector("#error-popup").style.right = "-100%";
-        document.querySelector("#error-timer").classList.add('no-transition');
+        document.querySelector('#error-timer').classList.remove('transition');
         document.querySelector("#error-timer").style.width = "100%";
-        document.querySelector('#error-timer').classList.remove('no-transition');
     }, 5000)
+    document.querySelector("#error-timer").classList.add('transition');
     document.querySelector("#error-timer").style.width = "0%";
     document.querySelector('#error-timer').style.borderRadius = "8px";
 }
