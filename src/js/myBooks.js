@@ -2,7 +2,6 @@
 let myBooks = localStorage.getItem("myBooks") ? JSON.parse(localStorage.getItem("myBooks")) : [];
 let userData = localStorage.getItem("bookListUserData") ? JSON.parse(localStorage.getItem("bookListUserData")) : [];
 processChallenge();
-processReadingStreak();
 const bookModal = document.getElementById("book-modal");
 const updateProgress = document.querySelector(".update-progress");
 const showProgress = document.querySelector(".show-progress");
@@ -43,33 +42,6 @@ function processChallenge() {
         }
     }
     updateUserData();   
-}
-
-/**
- * Resets the user's reading streak if the last read date is not yesterday.
- * Handles edge cases for the beginning of the month and year.
- * Updates the user data in local storage after modifying the streak.
- * 
- * @returns {void}
- */
-function processReadingStreak() {
-    const lastReadDate = new Date(userData.challenges.lastReadDate);
-    const date = new Date();
-    const yesterday = new Date(date);
-    if (date.getDate() === 1) {
-        if (date.getMonth() === 0) { // If January 1st, go to December 31st of last year
-            yesterday.setFullYear(date.getFullYear() - 1);
-            yesterday.setMonth(11);
-            yesterday.setDate(31);
-        } else {
-            yesterday.setMonth(date.getMonth() - 1);
-            yesterday.setDate(new Date(yesterday.getFullYear(), yesterday.getMonth() + 1, 0).getDate());
-        }
-    } else {
-        yesterday.setDate(date.getDate() - 1);
-    }
-    if (lastReadDate.toDateString() != yesterday.toDateString()) userData.challenges.readingStreak = 0;
-    updateUserData();
 }
 
 /**

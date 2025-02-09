@@ -10,6 +10,7 @@ if (userData.challenges === undefined) {
     userData = {"challenges": {"progress": 0, "challenge": 0, "timePeriod": "none", "lastReadDate": "none", "readingStreak": 0}, "lastRead": "none"};
     localStorage.setItem("bookListUserData", JSON.stringify(userData));
 }
+processReadingStreak();
 const addBookBtn = document.getElementById("add-to-my-books");
 const searchBox = document.getElementById("search-box");
 const suggestionBox = document.getElementById("suggestion-box");
@@ -44,6 +45,33 @@ function updateChallengesDiv() {
       divContent = `You have read ${userData.challenges.progress} out of ${userData.challenges.challenge} pages  this month!`;
   }
   challengesDiv.innerHTML = divContent;
+}
+
+/**
+ * Resets the user's reading streak if the last read date is not yesterday.
+ * Handles edge cases for the beginning of the month and year.
+ * Updates the user data in local storage after modifying the streak.
+ * 
+ * @returns {void}
+ */
+function processReadingStreak() {
+  const lastReadDate = new Date(userData.challenges.lastReadDate);
+  const date = new Date();
+  const yesterday = new Date(date);
+  if (date.getDate() === 1) {
+      if (date.getMonth() === 0) {
+          yesterday.setFullYear(date.getFullYear() - 1);
+          yesterday.setMonth(11);
+          yesterday.setDate(31);
+      } else {
+          yesterday.setMonth(date.getMonth() - 1);
+          yesterday.setDate(new Date(yesterday.getFullYear(), yesterday.getMonth() + 1, 0).getDate());
+      }
+  } else {
+      yesterday.setDate(date.getDate() - 1);
+  }
+  if (lastReadDate.toDateString() != yesterday.toDateString()) userData.challenges.readingStreak = 0;
+  localStorage.setItem("bookListUserData", JSON.stringify(userData));
 }
 
 /**
@@ -286,7 +314,7 @@ function displaySuggestions(suggestions) {
 /**
  * Fetches a list of recommended books from Google Books API based on
  * the provided array of favorite book titles. The API is queried
- * with the first 5 book titles, and the results are combined into a
+ * with the last 10 book titles, and the results are combined into a
  * Set to eliminate duplicates. If a query fails, an error is logged
  * to the console, and the function continues to the next query.
  * @param {string[]} favoriteBooks The array of favorite book titles.
@@ -324,8 +352,9 @@ async function fetchRecommendedBooks(favoriteBooks) {
  */
 function fetchReccommendations() {
   const favourites = myBooks.filter(book => book.favourite === true);
+  console.log(favourites == 0);
   if (favourites.length == 0) {
-    reccommendedSection.style.display = "none";
+    reccommendedSection.parentElement.style.display = "none";
     return;
   } else {
     fetchRecommendedBooks(favourites.map(book => book.title))
