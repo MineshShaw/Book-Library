@@ -70,7 +70,7 @@ function processReadingStreak() {
   } else {
       yesterday.setDate(date.getDate() - 1);
   }
-  if (lastReadDate.toDateString() != yesterday.toDateString()) userData.challenges.readingStreak = 0;
+  if (lastReadDate.toDateString() != yesterday.toDateString() && lastReadDate.toDateString() != date.toDateString()) userData.challenges.readingStreak = 0;
   localStorage.setItem("bookListUserData", JSON.stringify(userData));
 }
 

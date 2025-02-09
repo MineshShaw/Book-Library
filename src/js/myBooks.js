@@ -79,8 +79,9 @@ function updateUserData() {
  * @returns {undefined}
  */
 function renderMyBooks(myBooks) {
-    if (myBooks.length == 0) return;
     const myBooksList = document.querySelector(".bookshelf");
+    myBooksList.innerHTML = "";
+    if (myBooks.length == 0) return;
     let shelfID = 0;
     let index = 6;
     myBooksList.innerHTML = "";
