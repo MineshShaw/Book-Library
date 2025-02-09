@@ -31,16 +31,35 @@ function processChallenge() {
     const timePeriod = userData.challenges.timePeriod;
     const lastReadDate = new Date(userData.challenges.lastReadDate);
     const date = new Date();
+    const yesterday = new Date();
+    if (date.getDate() === 1) {
+        if (date.getMonth() === 0) {
+            yesterday.setFullYear(date.getFullYear() - 1);
+            yesterday.setMonth(11);
+            yesterday.setDate(31);
+        } else {
+            yesterday.setMonth(date.getMonth() - 1);
+            yesterday.setDate(new Date(yesterday.getFullYear(), yesterday.getMonth() + 1, 0).getDate());
+        }
+    } else {
+        yesterday.setDate(date.getDate() - 1);
+    }
+
+    const isSameAsYesterday =
+    lastReadDate.getFullYear() === yesterday.getFullYear() &&
+    lastReadDate.getMonth() === yesterday.getMonth() &&
+    lastReadDate.getDate() === yesterday.getDate();
+
     if (timePeriod == "daily") {
-        if (date > lastReadDate) {
+        if (date > yesterday && isSameAsYesterday) {
             userData.challenges.progress = 0;
         }
     } else if (timePeriod == "weekly") {
-        if (date.getDay() == 7 && date > lastReadDate) {
+        if (date.getDay() == 7 && date > yesterday && isSameAsYesterday) {
             userData.challenges.progress = 0;
         }
     } else {
-        if (date.getDate() == 1 && date > lastReadDate) {
+        if (date.getDate() == 1 && date > yesterday && isSameAsYesterday) {
             userData.challenges.progress = 0;
         }
     }
